@@ -3,12 +3,15 @@ import { Link } from "react-router-dom"
 import {auth }from '../fireStore'
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from "react-router-dom";
+import Loading from "../components/Loading";
 // import { useHistory } from 'react-router-dom';
 
 
 function Login () {
     // const history = useHistory();
     const navigate = useNavigate()
+    const [message , setMessage] = useState('')
+    const [Loading , setLoading] = useState(false)
 
     const [data , setData]  = useState({
         email : '',
@@ -24,15 +27,21 @@ function Login () {
     }
 
     const handleSubmit = async (e) => {
+        setLoading(true)
         e.preventDefault();
-
-        // logique firebase auth
+            try{
+                // logique firebase auth
             const userCredential = await signInWithEmailAndPassword(auth , data.email , data.password)
             localStorage.setItem('uid' , userCredential.user.uid)
-        
-        // rediriger ver index
             navigate('/Index')
-     
+            setMessage('Connecter avec sucesse')
+            setLoading(false)
+            }catch(error){
+                setMessage("Une erreur c'est produite verifier vos idantifiant")
+                setLoading(false)
+            }
+        
+
     }   
     return (
         <div class="container">
@@ -53,6 +62,7 @@ function Login () {
                                 <div class="p-5">
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
+                                        {message && <p className="alert alert-danger">{message}</p>}
                                     </div>
                                     <form class="user">
                                         <div class="form-group">
@@ -90,14 +100,23 @@ function Login () {
                                         </button>
                                         <hr/>
                                         <Link to="index.html" class="btn btn-google btn-user btn-block">
-                                            <i class="fab fa-google fa-fw"></i> Login with Google
+                                            <i class="fab fa-google fa-fw"></i> Login with Google <sup>Beta</sup>
                                         </Link>
                                        
                                     </form>
                                     <hr/>
                                    
                                     <div class="text-center">
-                                        <Link class="small" to="/Register">Create an Account!</Link>
+                                        <Link class="small" to="/Register">Create an Account!
+                                        {Loading === true ?
+                                         <div className="d-flex justify-content-center align-items-center" style={{ height: '5vh' }}>
+                                         <div className="spinner-border text-primary" role="status">
+                                           <span className="sr-only">Loading...</span>
+                                         </div>
+                                       </div>
+
+                                      : ''}
+                                        </Link>
                                     </div>
                                 </div>
                             </div>

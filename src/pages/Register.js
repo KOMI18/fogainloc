@@ -2,9 +2,12 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import {firestore , auth} from '../fireStore'
 import { collection, addDoc } from 'firebase/firestore';
+import Loading from "../components/Loading";
 import { createUserWithEmailAndPassword ,updateProfile} from "firebase/auth";
 function Register() {
     const [message ,setMessage] = useState('')
+    const [messageSucess , setMessageSucess] = useState('')
+    const [Loading , setLoading] = useState(false)
     const [data, setData] = useState({
         firstName: '',
         lastName: '',
@@ -23,6 +26,7 @@ function Register() {
     }
 
     const handleSubmit = async (e) => {
+        setLoading(true);
         e.preventDefault();
     //    logique d'inscription avec firebase 
         if(data.password !== data.repeatPassword){
@@ -40,6 +44,7 @@ function Register() {
                     email: data.email,
 
                 });
+                
                 const users = userCredential.user
                 await updateProfile(users  , {
                     displayName: data.firstName, 
@@ -47,11 +52,13 @@ function Register() {
                   })
                
                 // Utilisateur créé avec succès
-                
+                setMessageSucess('Votre compte a ete cree ')
                 console.log("User signed up successfully!");
+                setLoading(false)
             } catch (error) {
                console.log(error.message);
                setMessage('Une erreur est survenue')
+               setLoading(false)
             }
         }
             
@@ -78,6 +85,8 @@ function Register() {
                                 <div className="text-center">
                                   <h1 className="h4 text-gray-900 mb-4">Crée un Compte!</h1>
                                   {message && <p className="alert alert-danger">{message}</p>}
+                                  {messageSucess && <p className="alert alert-info">{messageSucess} <Link to='/Login'> se connecter</Link></p>}
+                                  
                                 </div>
                                 <form className="user" onSubmit={handleSubmit}>
                                     <div className="form-group row">
@@ -139,12 +148,21 @@ function Register() {
                                             />
                                         </div>
                                     </div>
+                                      
                                     <button type="submit"  onClick={handleSubmit} className="btn btn-primary btn-user btn-block">
                                         Register Account
+                                        {Loading === true ?
+                                         <div className="d-flex justify-content-center align-items-center" style={{ height: '5vh' }}>
+                                         <div className="spinner-border text-primary" role="status">
+                                           <span className="sr-only">Loading...</span>
+                                         </div>
+                                       </div>
+
+                                      : ''}
                                     </button>
                                     <hr />
                                     <Link to="index.html" className="btn btn-google btn-user btn-block">
-                                        <i className="fab fa-google fa-fw"></i> Register with Google
+                                        <i className="fab fa-google fa-fw"></i> Register with Google <sup>Beta</sup>
                                     </Link>
                                 </form>
                                 <hr />
