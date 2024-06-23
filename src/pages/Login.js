@@ -97,6 +97,14 @@ function Login () {
                                         </div>
                                         <button type="submit"  onClick={handleSubmit} class="btn btn-primary btn-user btn-block">
                                             Login
+                                            {Loading === true ?
+                                                <div className="d-flex justify-content-center align-items-center" style={{ height: '5vh' }}>
+                                                <div className="spinner-border text-primary" role="status">
+                                                <span className="sr-only">Loading...</span>
+                                                </div>
+                                            </div>
+
+                                            : ''}
                                         </button>
                                         <hr/>
                                         <Link to="index.html" class="btn btn-google btn-user btn-block">
@@ -108,14 +116,7 @@ function Login () {
                                    
                                     <div class="text-center">
                                         <Link class="small" to="/Register">Create an Account!
-                                        {Loading === true ?
-                                         <div className="d-flex justify-content-center align-items-center" style={{ height: '5vh' }}>
-                                         <div className="spinner-border text-primary" role="status">
-                                           <span className="sr-only">Loading...</span>
-                                         </div>
-                                       </div>
-
-                                      : ''}
+                                        
                                         </Link>
                                     </div>
                                 </div>
