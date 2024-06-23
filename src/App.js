@@ -1,23 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
-
+import {BrowserRouter , Routes , Route} from "react-router-dom";
+import Index from "./pages/Index";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import AddLocataire from "./pages/AddLocataire";
+import AllLocataire from "./pages/AllLocataire"
+import AddFacture from "./pages/AddFacture";
+import { useNavigate } from "react-router-dom";
 function App() {
+ 
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <BrowserRouter>
+          <Routes>
+            <Route index element={<Login/>} />
+            <Route path='/Index' element={<Index/>} />
+            <Route path="/Login" element={<Login/>} />
+            <Route path="/Register" element={<Register/>} />
+            <Route path="/AddLocataire" element={<AddLocataire/>} />
+            <Route path="/AllLocataire" element={<AllLocataire/>} />
+            <Route path="/AddFacture" element={<AddFacture/>} />
+            
+
+          </Routes>
+      </BrowserRouter>
     </div>
   );
 }
