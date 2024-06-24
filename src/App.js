@@ -6,6 +6,7 @@ import AddLocataire from "./pages/AddLocataire";
 import AllLocataire from "./pages/AllLocataire"
 import AddFacture from "./pages/AddFacture";
 import { useNavigate } from "react-router-dom";
+import AllFacture from "./pages/AllFacture";
 function App() {
  
   return (
@@ -19,6 +20,8 @@ function App() {
             <Route path="/AddLocataire" element={<AddLocataire/>} />
             <Route path="/AllLocataire" element={<AllLocataire/>} />
             <Route path="/AddFacture" element={<AddFacture/>} />
+            <Route path="/AllFacture" element={<AllFacture/>} />
+
             
 
           </Routes>

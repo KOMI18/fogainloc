@@ -44,7 +44,7 @@ function SideBar() {
                             <div className="collapse-divider"></div>
                             <h6 className="collapse-header">Autres:</h6>
                             <Link className="collapse-item" to="/AllLocataire">Tout les locataires</Link>
-                            <Link className="collapse-item" to="/AllPayments">Toutes les paiements</Link>
+                            <Link className="collapse-item" to="/AllFacture">Toutes les paiements</Link>
                         </div>
                     </div>
                 </li>

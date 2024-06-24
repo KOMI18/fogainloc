@@ -52,6 +52,8 @@ useEffect(()=>{
 
    fetchUsers();
 }, [])
+console.log(JSON.stringify(locataire, null, 2))
+
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission logic here
@@ -79,8 +81,8 @@ useEffect(()=>{
     // Optionally, reset the form
     setFormData({
         locataire: '',
-        montant: '',
-        reste: '',
+        montant: 0,
+        reste: 0,
         date: ''
     });
   };
@@ -98,22 +100,22 @@ useEffect(()=>{
           <div className="form-row">
           <div className="form-group col-md-6">
               <label htmlFor="rentalType">Selectioner Le locataire</label>
-              {message && <p className='alert alert-info'>{message}</p>}
+              
               <select
                 className="form-control"
-                id="rentalType"
-                name="rentalType"
-                value={formData.rentalType}
+                id="locataire"
+                name="locataire"
+                value={formData.locataire}
                 onChange={handleChange}
                 required
               >
-                <option value="">Nom locataire</option>
-                {locataire > 0 ? locataire.map((loc , index) => 
-                   <option value={loc.id}>{loc.firstName}</option>
+                  <option disabled>Selectioner</option>
 
-              ): (
-                <option value="maison">Ajouter d'abord des locataires</option>
-              )}
+                {locataire.length > 0 ? locataire.map((loc, index) => (
+                   <option key={index} value={loc.firstName}>{loc.firstName} {loc.lastName}</option>
+                )) : (
+                  <option disabled>Aucun locataire trouvé</option>
+                )}
               
               </select>
             </div>

@@ -8,12 +8,29 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useEffect} from "react";
 import { auth , firestore} from "../fireStore";
 import { getDocs ,collection } from "firebase/firestore";
+function getCurrentMonthFactures(factures) {
+    const currentMonth = new Date().getMonth() + 1; // getMonth() retourne un index de 0 à 11, donc +1 pour avoir de 1 à 12
+    const currentYear = new Date().getFullYear();
+  
+    return factures.filter(facture => {
+      const factureDateParts = facture.date.split('-'); // Séparer la date en parties
+      const factureYear = parseInt(factureDateParts[0], 10);
+      const factureMonth = parseInt(factureDateParts[1], 10);
+      return (
+        factureYear === currentYear && 
+        factureMonth === currentMonth
+      );
+    });
+  }
 function Index (){
     const [userData , setUserData] = useState([]);
     const [Loading , setLoading] = useState(true)
     const [user , setUser] = useState();
     const navigate = useNavigate();
+    const [sumMontant , setSumMontant] = useState(0)
+    const [sumReste , setSumReste] = useState(0)
     const [isSidebarVisible, setSidebarVisible] = useState(true);
+    const [total , setTotal] = useState(0)
     const toggleSidebar = () => {
         setSidebarVisible(!isSidebarVisible);
     };
@@ -52,8 +69,64 @@ function Index (){
     
         return () => unsubscribe();
     }, []);
-   
- 
+    useEffect(() => {
+        const fetchFactures = async () => {
+          setLoading(true);
+          try {
+            const facturesRef = collection(firestore, 'factures');
+            const querySnapshot = await getDocs(facturesRef);
+            const factures = querySnapshot.docs.map(doc => doc.data());
+            const currentMonthFactures = getCurrentMonthFactures(factures);
+    
+            let sum = 0;
+            let sumR = 0;
+            currentMonthFactures.forEach(data => {
+              if (data.montant) {
+                sum += parseFloat(data.montant); // Convertir en nombre avant d'additionner
+              }
+              if (data.reste) {
+                sumR += parseFloat(data.reste); // Convertir en nombre avant d'additionner
+              }
+            });
+            setSumMontant(sum);
+            setSumReste(sumR)
+          } catch (error) {
+            console.error("Error fetching factures: ", error);
+          } finally {
+            setLoading(false);
+          }
+        };
+    
+        fetchFactures();
+      }, []);
+    
+      useEffect(() => {
+        const fetchFactures = async () => {
+          setLoading(true);
+          try {
+            const facturesRef = collection(firestore, 'locataires');
+            const querySnapshot = await getDocs(facturesRef);
+            let sumTotal = 0 ;
+            querySnapshot.forEach(doc => {
+                const data = doc.data();
+                if (data.montant_loyer) {
+                  sumTotal += parseFloat(data.montant_loyer); // Convertir en nombre avant d'additionner
+                }
+             
+             
+            });
+            setTotal(sumTotal);
+           
+          } catch (error) {
+            console.error("Error fetching factures: ", error);
+          } finally {
+            setLoading(false);
+          }
+        };
+    
+        fetchFactures();
+      }, []);
+    
     return(
 <SidebarProvider>
      <div>
@@ -85,7 +158,7 @@ function Index (){
                                                 <div class="col mr-2">
                                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                         Recu ce mois</div>
-                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">$40</div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{sumMontant} FCFA</div>
                                                 </div>
                                                 <div class="col-auto">
                                                     <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -103,7 +176,7 @@ function Index (){
                                                 <div class="col mr-2">
                                                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                         Reste a recevoire</div>
-                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{parseInt(total - sumMontant - sumReste)} FCFA</div>
                                                 </div>
                                                 <div class="col-auto">
                                                     <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -123,14 +196,10 @@ function Index (){
                                                     </div>
                                                     <div class="row no-gutters align-items-center">
                                                         <div class="col-auto">
-                                                            <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
+                                                            <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{sumReste} FCFA</div>
                                                         </div>
                                                         <div class="col">
-                                                            <div class="progress progress-sm mr-2">
-                                                                <div class="progress-bar bg-info" role="progressbar"
-                                                                
-                                                                    aria-valuemax="100"></div>
-                                                            </div>
+                                                            
                                                         </div>
                                                     </div>
                                                 </div>
