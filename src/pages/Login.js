@@ -96,7 +96,6 @@ function Login () {
                                             </div>
                                         </div>
                                         <button type="submit"  onClick={handleSubmit} class="btn btn-primary btn-user btn-block">
-                                            Login
                                             {Loading === true ?
                                                 <div className="d-flex justify-content-center align-items-center" style={{ height: '5vh' }}>
                                                 <div className="spinner-border text-primary" role="status">
@@ -104,10 +103,10 @@ function Login () {
                                                 </div>
                                             </div>
 
-                                            : ''}
+                                            : 'Login'}
                                         </button>
                                         <hr/>
-                                        <Link to="index.html" class="btn btn-google btn-user btn-block">
+                                        <Link to="index.html" class="btn btn-google btn-user btn-block disabled" >
                                             <i class="fab fa-google fa-fw"></i> Login with Google <sup>Beta</sup>
                                         </Link>
                                        

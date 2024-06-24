@@ -150,18 +150,18 @@ function Register() {
                                     </div>
                                       
                                     <button type="submit"  onClick={handleSubmit} className="btn btn-primary btn-user btn-block">
-                                        Register Account
+                                        
                                         {Loading === true ?
-                                         <div className="d-flex justify-content-center align-items-center" style={{ height: '5vh' }}>
+                                         <div className="d-flex justify-content-center align-items-center" style={{ height: '2px' }}>
                                          <div className="spinner-border text-primary" role="status">
                                            <span className="sr-only">Loading...</span>
                                          </div>
                                        </div>
 
-                                      : ''}
+                                      : 'Register Account'}
                                     </button>
                                     <hr />
-                                    <Link to="index.html" className="btn btn-google btn-user btn-block">
+                                    <Link to="index.html" class="btn btn-google btn-user btn-block disabled" >
                                         <i className="fab fa-google fa-fw"></i> Register with Google <sup>Beta</sup>
                                     </Link>
                                 </form>

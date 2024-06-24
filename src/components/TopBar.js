@@ -1,9 +1,20 @@
 import React, { useContext } from "react";
 import { SidebarContext } from "./SidebarContext";
-
+import { getAuth , signOut } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 function TopBar({user}) {
-
-   
+    const navigate = useNavigate()
+    const  handleLogout = async () => {
+        try {
+          const auth = getAuth();
+          await signOut(auth);
+          console.log('Déconnexion réussie');
+           navigate('/Login') 
+           window.location.reload()
+        } catch (error) {
+          console.error('Erreur lors de la déconnexion :', error);
+        }
+      }
 
     const { toggleSidebar } = useContext(SidebarContext);
 
@@ -70,7 +81,7 @@ function TopBar({user}) {
                         </a>
                         
                         <div className="dropdown-divider"></div>
-                        <a className="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                        <a className="dropdown-item" onClick={handleLogout} data-toggle="modal" data-target="#logoutModal">
                             <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                             Logout
                         </a>
