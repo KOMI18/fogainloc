@@ -1,9 +1,10 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { SidebarContext } from "./SidebarContext";
 import { getAuth , signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-function TopBar({user}) {
+function TopBar({user , onSearch}) {
     const navigate = useNavigate()
+    const [term, setTerm] = useState('');
     const  handleLogout = async () => {
         try {
           const auth = getAuth();
@@ -17,7 +18,12 @@ function TopBar({user}) {
       }
 
     const { toggleSidebar } = useContext(SidebarContext);
-
+    const handleChange = (e) => {
+        const newterms = e.target.value ;
+        setTerm(newterms)
+        onSearch(newterms)
+        
+    }
     return (
         <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
@@ -28,10 +34,14 @@ function TopBar({user}) {
 
             <form className="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                 <div className="input-group">
-                    <input type="text" className="form-control bg-light border-0 small" placeholder="Search for..."
-                        aria-label="Search" aria-describedby="basic-addon2" />
+                  <input type="text" className="form-control bg-light border-0 small"
+                                    placeholder="Enter le nom .." aria-label="Search"
+                                    aria-describedby="basic-addon2"
+                                    onChange={handleChange}
+                                    value={term}
+                                    />
                     <div className="input-group-append">
-                        <button className="btn btn-primary" type="button">
+                        <button className="btn btn-primary" type="button" disabled>
                             <i className="fas fa-search fa-sm"></i>
                         </button>
                     </div>
@@ -49,11 +59,14 @@ function TopBar({user}) {
                         <form className="form-inline mr-auto w-100 navbar-search">
                             <div className="input-group">
                                 <input type="text" className="form-control bg-light border-0 small"
-                                    placeholder="Search for..." aria-label="Search"
-                                    aria-describedby="basic-addon2" />
+                                    placeholder="Enter le nom ..." aria-label="Search"
+                                    aria-describedby="basic-addon2"
+                                    onChange={handleChange}
+                                    value={term}
+                                    />
                                 <div className="input-group-append">
-                                    <button className="btn btn-primary" type="button">
-                                        <i className="fas fa-search fa-sm"></i>
+                                    <button className="btn btn-primary" type="button" disabled>
+                                        <i className="fas fa-search fa-sm" ></i>
                                     </button>
                                 </div>
                             </div>

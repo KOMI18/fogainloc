@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom"
 import {auth }from '../fireStore'
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -11,7 +11,7 @@ function Login () {
     // const history = useHistory();
     const navigate = useNavigate()
     const [message , setMessage] = useState('')
-    const [Loading , setLoading] = useState(false)
+    const [Loadings , setLoading] = useState(false)
 
     const [data , setData]  = useState({
         email : '',
@@ -21,11 +21,20 @@ function Login () {
             const {name , value} = e.target ;
             setData(prevData =>({
                 ...prevData,
-                [name] : value 
+                [name] : value
             }))
        
     }
-
+    useEffect(() => {
+        if (message) {
+            const timer = setTimeout(() => {
+                setMessage('');
+            }, 3000); // 3000 millisecondes = 3 secondes
+    
+            // Cleanup the timer
+            return () => clearTimeout(timer);
+        }
+    }, [message]);
     const handleSubmit = async (e) => {
         setLoading(true)
         e.preventDefault();
@@ -96,14 +105,7 @@ function Login () {
                                             </div>
                                         </div>
                                         <button type="submit"  onClick={handleSubmit} class="btn btn-primary btn-user btn-block">
-                                            {Loading === true ?
-                                                <div className="d-flex justify-content-center align-items-center" style={{ height: '5vh' }}>
-                                                <div className="spinner-border text-primary" role="status">
-                                                <span className="sr-only">Loading...</span>
-                                                </div>
-                                            </div>
-
-                                            : 'Login'}
+                                            {Loadings === true ? <Loading/>: 'Login'}
                                         </button>
                                         <hr/>
                                         <Link to="index.html" class="btn btn-google btn-user btn-block disabled" >

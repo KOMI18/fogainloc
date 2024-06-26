@@ -1,15 +1,17 @@
 import React, { useState , useEffect} from 'react';
 import SideBar from '../components/SideBar';
 import Footer from '../components/Footer';
+import Loading from '../components/Loading';
 import TopBar from '../components/TopBar';
 import { SidebarProvider } from "../components/SidebarContext";
 // import firestore from '../fireStore';
 import { firestore } from '../fireStore';
 import { collection, addDoc ,getDocs } from 'firebase/firestore';
+import { set } from 'firebase/database';
 function AddFacture() {
     const [message ,setMessage] = useState('')
     const [locataire , setLocataire] = useState([]);
-    const [Loading ,setLoading] = useState(true);
+    const [Loadings ,setLoading] = useState(false);
   const [formData, setFormData] = useState({
     locataire: '',
     montant: '',
@@ -46,7 +48,7 @@ useEffect(()=>{
      } catch (error) {
        console.error("Error fetching users: ", error);
      } finally {
-       setLoading(false);
+      
      }
    };
 
@@ -55,6 +57,7 @@ useEffect(()=>{
 console.log(JSON.stringify(locataire, null, 2))
 
   const handleSubmit = (e) => {
+    setLoading(true)
     e.preventDefault();
     // Handle form submission logic here
 
@@ -66,9 +69,11 @@ console.log(JSON.stringify(locataire, null, 2))
             await addDoc(collectionRef, data);
            
             setMessage('Facture ajouter ')
+          setLoading(false)
         } catch (error) {
             setMessage("Erreur lors de l'ajout")
             console.error("Error adding data:", error);
+            setLoading(false)
         }
     };
     
@@ -162,7 +167,9 @@ console.log(JSON.stringify(locataire, null, 2))
             </div>
           </div>
           
-          <button type="submit" className="btn btn-primary btn-block">Enregistrer</button>
+          <button type="submit" className="btn btn-primary btn-block">
+            {Loadings === true ? <Loading/> : 'Enregistrer'}
+          </button>
         </form>
       </div>
     </div>

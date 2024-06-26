@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {firestore , auth} from '../fireStore'
 import { collection, addDoc } from 'firebase/firestore';
 import Loading from "../components/Loading";
@@ -7,7 +7,7 @@ import { createUserWithEmailAndPassword ,updateProfile} from "firebase/auth";
 function Register() {
     const [message ,setMessage] = useState('')
     const [messageSucess , setMessageSucess] = useState('')
-    const [Loading , setLoading] = useState(false)
+    const [Loadings , setLoading] = useState(false)
     const [data, setData] = useState({
         firstName: '',
         lastName: '',
@@ -24,7 +24,16 @@ function Register() {
         }));
         console.log(data);
     }
-
+    useEffect(() => {
+        if (message) {
+            const timer = setTimeout(() => {
+                setMessage('');
+            }, 3000); // 3000 millisecondes = 3 secondes
+    
+            // Cleanup the timer
+            return () => clearTimeout(timer);
+        }
+    }, [message]);
     const handleSubmit = async (e) => {
         setLoading(true);
         e.preventDefault();
@@ -151,14 +160,7 @@ function Register() {
                                       
                                     <button type="submit"  onClick={handleSubmit} className="btn btn-primary btn-user btn-block">
                                         
-                                        {Loading === true ?
-                                         <div className="d-flex justify-content-center align-items-center" style={{ height: '2px' }}>
-                                         <div className="spinner-border text-primary" role="status">
-                                           <span className="sr-only">Loading...</span>
-                                         </div>
-                                       </div>
-
-                                      : 'Register Account'}
+                                        {Loadings === true ? <Loading/>: 'Register Account'}
                                     </button>
                                     <hr />
                                     <Link to="index.html" class="btn btn-google btn-user btn-block disabled" >

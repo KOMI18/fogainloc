@@ -28,13 +28,13 @@ function SideBar() {
 
                 <hr className="sidebar-divider" />
 
-                <div className="sidebar-heading">Addons</div>
+                <div className="sidebar-heading"></div>
 
                 <li className="nav-item">
                     <Link className="nav-link collapsed" to="#" data-toggle="collapse" data-target="#collapsePages"
                         aria-expanded="true" aria-controls="collapsePages">
                         <i className="fas fa-fw fa-folder"></i>
-                        <span>Pages</span>
+                        <span>Actions</span>
                     </Link>
                     <div id="collapsePages" className="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                         <div className="bg-white py-2 collapse-inner rounded">
@@ -42,9 +42,9 @@ function SideBar() {
                             <Link className="collapse-item" to="/AddLocataire">Ajouter un locataire</Link>
                             <Link className="collapse-item" to="/AddFacture">Ajouter un paiement</Link>
                             <div className="collapse-divider"></div>
-                            <h6 className="collapse-header">Autres:</h6>
-                            <Link className="collapse-item" to="/AllLocataire">Tout les locataires</Link>
-                            <Link className="collapse-item" to="/AllFacture">Toutes les paiements</Link>
+                            <h6 className="collapse-header">List:</h6>
+                            <Link className="collapse-item" to="/AllLocataire">Tous les locataires</Link>
+                            <Link className="collapse-item" to="/AllFacture">Tous les paiements</Link>
                         </div>
                     </div>
                 </li>

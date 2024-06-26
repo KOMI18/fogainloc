@@ -2,13 +2,15 @@ import React, { useState , useEffect} from 'react';
 import SideBar from '../components/SideBar';
 import Footer from '../components/Footer';
 import TopBar from '../components/TopBar';
+import Loading from '../components/Loading';
 import { SidebarProvider } from "../components/SidebarContext";
 // import firestore from '../fireStore';
 import { firestore } from '../fireStore';
 import { collection, addDoc } from 'firebase/firestore';
 function AddLocataire() {
     const [message ,setMessage] = useState('')
-  const [formData, setFormData] = useState({
+    const [Looder , setLoadeur] = useState(false)
+    const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     city: '',
@@ -36,6 +38,7 @@ function AddLocataire() {
     }
 }, [message]);
   const handleSubmit = (e) => {
+    setLoadeur(true)
     e.preventDefault();
     // Handle form submission logic here
 
@@ -47,9 +50,11 @@ function AddLocataire() {
             await addDoc(collectionRef, data);
            
             setMessage('Locataire ajouter ')
+            setLoadeur(false)
         } catch (error) {
             setMessage("Erreur lors de l'ajout")
             console.error("Error adding data:", error);
+            setLoadeur(false)
         }
     };
     
@@ -70,15 +75,15 @@ function AddLocataire() {
       montant_loyer : ''
     });
   };
-
+  
   return (
 <SidebarProvider>
   <div id="wrapper" className="container-fluid">
     <SideBar />
     <div className="c d-flex flex-column" id="content-wrapper">
-      <TopBar />
+      <TopBar  />
       <div className="container mt-4">
-        <h2 className="text-center">Enregistrement d'un locataire</h2>
+        <h3 className="text-center">Ajouter d'un locataire</h3>
         {message && <p className="alert alert-info">{message}</p>}
         <form onSubmit={handleSubmit}>
           <div className="form-row">
@@ -126,7 +131,7 @@ function AddLocataire() {
             <div className="form-group col-md-6">
               <label htmlFor="tel">Téléphone</label>
               <input
-                type="text"
+                type="number"
                 className="form-control"
                 id="tel"
                 name="tel"
@@ -161,7 +166,7 @@ function AddLocataire() {
                 onChange={handleChange}
                 required
               >
-                <option value="">Sélectionnez le type de location</option>
+                <option disabled>Sélectionnez le type de location</option>
                 <option value="maison">Maison</option>
                 <option value="appartement">Appartement</option>
                 <option value="Boutique">Boutique</option>
@@ -173,7 +178,7 @@ function AddLocataire() {
             <div className="form-group col-md-12">
               <label htmlFor="montant_loyer">Montant de location</label>
               <input
-                type="text"
+                type="number"
                 className="form-control"
                 id="montant_loyer"
                 name="montant_loyer"
@@ -184,7 +189,7 @@ function AddLocataire() {
               />
             </div>
           </div>
-          <button type="submit" className="btn btn-primary btn-block">Enregistrer</button>
+          <button type="submit" className="btn btn-primary btn-block">{Looder===true ? <Loading/> : 'Enregistrer'}</button>
         </form>
       </div>
     </div>

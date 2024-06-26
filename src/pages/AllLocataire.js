@@ -4,10 +4,12 @@ import { SidebarProvider } from "../components/SidebarContext";
 import { useEffect, useState } from "react";
 import { getDocs, collection , docs } from "firebase/firestore";
 import { firestore } from "../fireStore";
+import Loading from "../components/Loading";
 import Footer from "../components/Footer";
 function AllLocataire () {
     const [userData , setUserData] = useState([]);
-    const [Loading , setLoading] = useState(true)
+    const [searchTerm  , setSearchTerm] = useState('')
+    const [Loadings , setLoading] = useState(true)
     const [currentMonth ,setCurrentMonth] = useState (new Date().getMonth() + 1)
     useEffect(()=>{
             
@@ -28,21 +30,26 @@ function AllLocataire () {
     }, [])
     console.log(JSON.stringify(userData, null, 2))
    
+    const handleSearch = (term) => {
+        setSearchTerm(term)
+    }
+    const filteredItems = userData.filter(item =>
+        item.firstName.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     return(
 <SidebarProvider>
+{Loadings === true ? (
+        <Loading/>
+) : (
 <div>
-            <div id="wrapper">
+    <div id="wrapper">
+         <SideBar/>
 
-{/* <!-- Sidebar --> */}
-        <SideBar/>
-
-{/* <!-- End of Sidebar --> */}
-
-{/* <!-- Content Wrapper --> */}
-<div id="content-wrapper" class="d-flex flex-column">
-            <TopBar/>
-    {/* <!-- Main Content --> */}
-    <div id="content">
+     
+        <div id="content-wrapper" class="d-flex flex-column">
+                    <TopBar onSearch={handleSearch}/>
+            {/* <!-- Main Content --> */}
+            <div id="content">
 
       
         <div class="container-fluid">
@@ -72,7 +79,7 @@ function AllLocataire () {
                             </thead>
                            
                             <tbody>
-                            {userData.length > 0 ? userData.map((data, index) => (
+                            {filteredItems.length > 0 ? filteredItems.map((data, index) => (
                                 <tr key={index}>
                                     <td>{data.firstName}</td>
                                     <td>{data.city}</td>
@@ -100,20 +107,18 @@ function AllLocataire () {
             </div>
 
         </div>
-        {/* <!-- /.container-fluid --> */}
+      
 
-    </div>
-    {/* <!-- End of Main Content --> */}
-
-    {/* <!-- Footer --> */}
-            <Footer/>
-    {/* <!-- End of Footer --> */}
-
-</div>
-{/* <!-- End of Content Wrapper --> */}
-
-</div>
         </div>
+  
+      <Footer/>
+   
+      </div>
+    </div>
+</div>
+)}
+
+
 </SidebarProvider>
      
     )
