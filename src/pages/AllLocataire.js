@@ -6,6 +6,9 @@ import { getDocs, collection , docs } from "firebase/firestore";
 import { firestore } from "../fireStore";
 import Loading from "../components/Loading";
 import Footer from "../components/Footer";
+import { Link } from "react-router-dom";
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 function AllLocataire () {
     const [userData , setUserData] = useState([]);
     const [searchTerm  , setSearchTerm] = useState('')
@@ -35,7 +38,42 @@ function AllLocataire () {
     }
     const filteredItems = userData.filter(item =>
         item.firstName.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+    );
+
+    const downloadList = () => {
+        const currentDay = new Date().getDate();
+        const currentMonth = new Date().getMonth() + 1;
+        const currentYear = new Date().getFullYear();
+        const doc = new jsPDF();
+    
+        doc.text("Table des locataires", 20, 10);
+        doc.text(`${currentDay} / ${currentMonth} / ${currentYear}`, 20, 20);
+
+        
+        const tableColumn = ["Nom", "MOntant", "Date", "Reste"];
+        const tableRows = [];
+    
+        filteredItems.forEach(item => {
+          const itemData = [
+            item.firstName,
+            item.city,
+            item.rentalType,
+            item.tel,
+            item.montant_loyer || 'N/A',
+            item.numero_cni,
+            `${item.date_paiement || '15 '}/${currentMonth}`
+          ];
+          tableRows.push(itemData);
+        });
+        doc.autoTable({
+            startY: 30, // Start after the title and date text
+            head: [tableColumn],
+            body: tableRows,
+          });
+        // doc.autoTable(tableColumn, tableRows, { startY: 30 });
+        doc.save('Liste.pdf');
+      };
+    
     return(
 <SidebarProvider>
 {Loadings === true ? (
@@ -55,12 +93,16 @@ function AllLocataire () {
         <div class="container-fluid">
 
             {/* <!-- Page Heading --> */}
-            <h1 class="h3 mb-2 text-gray-800">Tout les locataires</h1>
+            <h1 class="h3 mb-2 text-gray-800">Tous les locataires</h1>
            
             {/* <!-- DataTales Example --> */}
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Information</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <Link onClick={downloadList} class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                            <i class="fas fa-download fa-sm text-white-50"></i> Télécharger
+                        </Link>
+                    </h6>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">

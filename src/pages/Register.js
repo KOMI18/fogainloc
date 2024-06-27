@@ -88,7 +88,12 @@ function Register() {
             <div className="card o-hidden border-0 shadow-lg my-5">
                 <div className="card-body p-0">
                     <div className="row">
-                        <div className="col-lg-5 d-none d-lg-block bg-register-image"></div>
+                        <div className="col-lg-5 d-none d-lg-block bg-register-image">
+                        <div class="text-center">
+                                        <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style={{width: '25rem' , height:'20rem'}}
+                                            src="img/undraw_posting_photo.svg" alt="..."/>
+                             </div>
+                        </div>
                         <div className="col-lg-7">
                             <div className="p-5">
                                 <div className="text-center">

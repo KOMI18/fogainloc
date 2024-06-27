@@ -6,6 +6,9 @@ import Loading from "../components/Loading";
 import { getDocs, collection , docs } from "firebase/firestore";
 import { firestore } from "../fireStore";
 import Footer from "../components/Footer";
+import jsPDF from "jspdf";
+import 'jspdf-autotable'
+import { Link } from "react-router-dom";
 function AllFacture () {
     const [facture , setFacture] = useState([]);
     const [Loadings , setLoading] = useState(true)
@@ -34,6 +37,37 @@ function AllFacture () {
    const filteredItems = facture.filter(item => 
     item.locataire.toLowerCase().includes(searchTerm.toLowerCase())
    )
+   const downloadList = () => {
+        const currentDate = new Date().getDate()
+        const currentYear = new Date().getFullYear()
+        const currentMonth = new Date().getMonth() + 1 ;
+
+        const doc = new jsPDF()
+        const tableRows = []
+        const tableColumn = ["Nom", "Ville", "Type", "Téléphone", "Loyer", "CNI", "Date paiement"];
+
+        doc.text('TOUTES LES FACTURES' , 20 ,10)
+        doc.text(`${currentDate} / ${currentMonth} / ${currentYear}` , 20  , 20)
+
+        filteredItems.forEach(item =>{
+            const itemData = [
+                item.locataire,
+                item.montant,
+                item.date,
+                item.reste
+               
+              ];
+              tableRows.push(itemData)
+        }
+            
+        )
+        doc.autoTable({
+            startY : 30,
+            head: [tableColumn],
+            body: tableRows,
+        })
+        doc.save('Facture.pdf')
+   }
     return(
 <SidebarProvider>
 {Loadings ===true ? (
@@ -56,7 +90,11 @@ function AllFacture () {
                     
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Information</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">
+                                <Link onClick={downloadList} class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                                    <i class="fas fa-download fa-sm text-white-50"></i> Télécharger
+                                 </Link>
+                                </h6>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">

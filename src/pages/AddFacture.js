@@ -97,7 +97,7 @@ console.log(JSON.stringify(locataire, null, 2))
   <div id="wrapper" className="container-fluid">
     <SideBar />
     <div className="c d-flex flex-column" id="content-wrapper">
-      <TopBar />
+      <TopBar  disabledSearch={true}/>
       <div className="container mt-4">
         <h2 className="text-center">Ajout d'une facture</h2>
         {message && <p className="alert alert-info">{message}</p>}

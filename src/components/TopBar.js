@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { SidebarContext } from "./SidebarContext";
 import { getAuth , signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-function TopBar({user , onSearch}) {
+function TopBar({user , onSearch , disabledSearch}) {
     const navigate = useNavigate()
     const [term, setTerm] = useState('');
     const  handleLogout = async () => {
@@ -32,13 +32,14 @@ function TopBar({user , onSearch}) {
             </button>
 
 
-            <form className="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+            <form  className="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                 <div className="input-group">
                   <input type="text" className="form-control bg-light border-0 small"
                                     placeholder="Enter le nom .." aria-label="Search"
                                     aria-describedby="basic-addon2"
                                     onChange={handleChange}
                                     value={term}
+                                    disabled={disabledSearch}
                                     />
                     <div className="input-group-append">
                         <button className="btn btn-primary" type="button" disabled>

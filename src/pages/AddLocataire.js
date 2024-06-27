@@ -81,7 +81,7 @@ function AddLocataire() {
   <div id="wrapper" className="container-fluid">
     <SideBar />
     <div className="c d-flex flex-column" id="content-wrapper">
-      <TopBar  />
+      <TopBar disabledSearch={true} />
       <div className="container mt-4">
         <h3 className="text-center">Ajouter d'un locataire</h3>
         {message && <p className="alert alert-info">{message}</p>}

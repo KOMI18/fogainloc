@@ -1,9 +1,10 @@
 import SideBar from "../components/SideBar";
 import TopBar from "../components/TopBar";
 import Footer from "../components/Footer";
+import Chart from 'chart.js/auto'
 import { SidebarProvider } from "../components/SidebarContext";
 import { Link , useNavigate} from "react-router-dom";
-import { useState} from "react";
+import { useRef, useState} from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect} from "react";
 import Loading from "../components/Loading";
@@ -28,15 +29,23 @@ function Index (){
     const [Loadings , setLoading] = useState(true)
     const [user , setUser] = useState();
     const navigate = useNavigate();
+    const canvasRef = useRef(null);
+    const canvasRef1 = useRef(null);
+
     const [sumMontant , setSumMontant] = useState(0)
     const [sumReste , setSumReste] = useState(0)
     const [isSidebarVisible, setSidebarVisible] = useState(true);
     const [total , setTotal] = useState(0)
     const marginTopVal = '200px'
+    const [viewModal , setViewModal] =  useState(true)
+    const [chartDate , setChartData] = useState([])
     const toggleSidebar = () => {
         setSidebarVisible(!isSidebarVisible);
     };
-  
+    
+    const viewModalLogout = () => {
+        setViewModal(true)
+    }
     useEffect(()=>{
             
          const fetchUsers = async () => {
@@ -78,6 +87,7 @@ function Index (){
             const facturesRef = collection(firestore, 'factures');
             const querySnapshot = await getDocs(facturesRef);
             const factures = querySnapshot.docs.map(doc => doc.data());
+            setChartData(factures)
             const currentMonthFactures = getCurrentMonthFactures(factures);
     
             let sum = 0;
@@ -85,6 +95,7 @@ function Index (){
             currentMonthFactures.forEach(data => {
               if (data.montant) {
                 sum += parseFloat(data.montant); // Convertir en nombre avant d'additionner
+             
               }
               if (data.reste) {
                 sumR += parseFloat(data.reste); // Convertir en nombre avant d'additionner
@@ -129,7 +140,86 @@ function Index (){
     
         fetchFactures();
       }, []);
+
+      useEffect(() => {
+        let chartInstance = null;
     
+        const chart = () => {
+          if (chartInstance !== null) {
+            chartInstance.destroy();
+          }
+    
+          if (canvasRef.current) {
+            chartInstance = new Chart(
+              canvasRef.current,
+              {
+                type: 'line',
+                data: {
+                  labels: chartDate.map(row => row.date),
+                  datasets: [
+                    {
+                      label: 'Historiques des aerées',
+                      data: chartDate.map(row => row.reste),
+                    },
+                  ],
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                },
+              }
+            );
+          }
+        };
+    
+        chart();
+    
+        return () => {
+          if (chartInstance !== null) {
+            chartInstance.destroy();
+          }
+        };
+      }, [chartDate]);
+
+      useEffect(() => {
+        let chartInstance = null;
+    
+        const chart = () => {
+          if (chartInstance !== null) {
+            chartInstance.destroy();
+          }
+    
+          if (canvasRef1.current) {
+            chartInstance = new Chart(
+              canvasRef1.current,
+              {
+                type: 'bar',
+                data: {
+                  labels: chartDate.map(row => row.date),
+                  datasets: [
+                    {
+                      label: 'Historiques des Paiements',
+                      data: chartDate.map(row => row.montant),
+                    },
+                  ],
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                },
+              }
+            );
+          }
+        };
+    
+        chart();
+    
+        return () => {
+          if (chartInstance !== null) {
+            chartInstance.destroy();
+          }
+        };
+      }, [chartDate]);
     return(
    
 <SidebarProvider>
@@ -144,14 +234,13 @@ function Index (){
     
                         <div id="content">
     
-                            <TopBar user={user} />
+                            <TopBar user={user} disabledSearch={true} />
     
                             <div class="container-fluid">
     
                                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                                     <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                                    <Link to="/Login" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                            class="fas fa-download fa-sm text-white-50"></i> Generate Report</Link>
+                                   
                                 </div>
     
                                 {/* <!-- Content Row --> */}
@@ -236,7 +325,15 @@ function Index (){
                                         </div>
                                     </div>
                                 </div>
-    
+                                
+                                <div class="table-responsive col-xl-3 col-md-6 mb-4" style={{width: '100%'}}>
+                                    <canvas ref={canvasRef1} id="reste"></canvas>
+                                </div>
+                                <div class="table-responsive col-xl-3 col-md-6 mb-4" style={{width: '100%'}}>
+                                    <canvas ref={canvasRef} id="loyer"></canvas>
+                                </div>
+                               
+                              
                                 {/* <!-- Content Row --> */}
     
                             
@@ -262,24 +359,29 @@ function Index (){
         </a>
     
         {/* <!-- Logout Modal--> */}
-        <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                        <a class="btn btn-primary" href="login.html">Logout</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {viewModal === true ? (
+             <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+             <div class="modal-dialog" role="document">
+                 <div class="modal-content">
+                     <div class="modal-header">
+                         <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                         <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                             <span aria-hidden="true">×</span>
+                         </button>
+                     </div>
+                     <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                     <div class="modal-footer">
+                         <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                         <a class="btn btn-primary" href="login.html">Logout</a>
+                     </div>
+                 </div>
+             </div>
+         </div>
+        ) : (
+            ''
+        )}
+       
     
      </div>
         ) }

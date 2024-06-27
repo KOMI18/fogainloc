@@ -65,7 +65,10 @@ function Login () {
                         {/* <!-- Nested Row within Card Body --> */}
                         <div class="row">
                             <div class="col-lg-6 d-none d-lg-block bg-login-image">
-                                {/* <img src="../img/undraw_posting_photo.svg" ></img> */}
+                            <div class="text-center">
+                                        <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style={{width: '25rem' , height:'20rem'}}
+                                            src="img/undraw_posting_photo.svg" alt="..."/>
+                             </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="p-5">
